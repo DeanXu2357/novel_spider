@@ -48,6 +48,11 @@ with open(JSON_PATH, 'w') as f:
 # 前往該url
 # 抓取內容
 # 寫到dir 用menuJson鍵作檔案名 寫成md檔
+for index in menuJson:
+    url = menuJson[index]['url']
+    chapter = menuJson[index]['chapter']
+    DRIVER.get(url)
+
 
 
 # 搜尋列輸入
