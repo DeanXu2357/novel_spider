@@ -56,8 +56,7 @@ for index in menuJson:
     # 使用網頁的簡轉繁功能
     DRIVER.find_element_by_id('st').click()
     content = DRIVER.find_element_by_xpath('//*[@id="content"]').text
-    # TODO: 檢查該路徑(DATA_PATH)下有無 index編號.md 無則創一個
-    # TODO: content 寫入到該檔案中
+    # 檢查該路徑(DATA_PATH)下有無 index編號.md 無則創一個
     file = open(DATA_PATH + str(index) + '.txt', 'a')
     file.write(content)
     file.close()
