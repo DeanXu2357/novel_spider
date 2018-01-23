@@ -52,12 +52,15 @@ with open(JSON_PATH, 'w') as f:
 for index in menuJson:
     url = menuJson[index]['url']
     chapter = menuJson[index]['chapter']
-    DRIVER.get(url)
+    DRIVER.get('http://www.piaotian.com/html/8/8502/' + url)
     # 使用網頁的簡轉繁功能
     DRIVER.find_element_by_id('st').click()
     content = DRIVER.find_element_by_xpath('//*[@id="content"]').text
     # TODO: 檢查該路徑(DATA_PATH)下有無 index編號.md 無則創一個
     # TODO: content 寫入到該檔案中
+    file = open(DATA_PATH + str(index) + '.txt', 'a')
+    file.write(content)
+    file.close()
 
 # 搜尋列輸入
 # driver.find_element_by_xpath('//*[@id="searchkey"]').send_keys('極道天魔')
