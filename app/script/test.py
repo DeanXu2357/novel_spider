@@ -19,7 +19,8 @@ if not os.path.exists(DATA_PATH):
 JSON_PATH = DATA_PATH + 'menu.json'
 
 # 極道天魔目錄頁
-# TODO 未來應該建立一個 {小說: 目錄頁} mapping的json 專門給飄天文學網
+# TODO: 未來應該建立一個 {小說: 目錄頁} mapping的json 專門給飄天文學網
+# TODO: 這邊還要研究一下，不開啟brower的爬蟲方法
 DRIVER = webdriver.Chrome(WEBDRIVER_PATH)
 DRIVER.get('http://www.piaotian.com/html/8/8502/index.html')
 
@@ -42,7 +43,7 @@ for item in CONTENTS:
 with open(JSON_PATH, 'w') as f:
     json.dump(menuJson, f)
 
-# TODO 這邊可能要研究一下 generate 或是 多線程
+# TODO: 這邊可能要研究一下 generate 或是 多線程
 # menuJson 用鍵排序
 # 迴圈
 # 前往該url
@@ -52,8 +53,11 @@ for index in menuJson:
     url = menuJson[index]['url']
     chapter = menuJson[index]['chapter']
     DRIVER.get(url)
-
-
+    # 使用網頁的簡轉繁功能
+    DRIVER.find_element_by_id('st').click()
+    content = DRIVER.find_element_by_xpath('//*[@id="content"]').text
+    # TODO: 檢查該路徑(DATA_PATH)下有無 index編號.md 無則創一個
+    # TODO: content 寫入到該檔案中
 
 # 搜尋列輸入
 # driver.find_element_by_xpath('//*[@id="searchkey"]').send_keys('極道天魔')

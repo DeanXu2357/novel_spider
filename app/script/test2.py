@@ -6,7 +6,6 @@ import json
 from pprint import pprint
 
 from selenium import webdriver
-import opencc
 
 import setting
 
@@ -25,15 +24,12 @@ DRIVER = webdriver.Chrome(WEBDRIVER_PATH)
 
 DRIVER.get('http://www.piaotian.com/html/8/8502/5379303.html')
 
+# 使用網頁的簡轉繁功能
+DRIVER.find_element_by_id('st').click()
+
 content = DRIVER.find_element_by_xpath(
     '//*[@id="content"]').text
 
-# contents = DRIVER.find_elements_by_css_selector('#content > font')
-conv_content = opencc.convert(content, config='s2t.json')
-print(conv_content)
-# pprint(content)
-
-
-# print(content)
+print(content)
 
 DRIVER.close()
