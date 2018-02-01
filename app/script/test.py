@@ -1,16 +1,20 @@
+# 這邊這個版本是 從飄天文學網 小說目錄頁
+# 抓取所有目次和章節url 然後逐條下載
+# 沒有過濾已載過章節 沒有簡轉繁
 import os
 import time
 import re
 import json
 
 from selenium import webdriver
+from pyvirtualdisplay import Display
 
 import setting
 
 # 定義變數
 WEBDRIVER_PATH = os.environ.get('webdriver_path')
 DATA_PATH = os.environ.get('data_path')
-NOVEL_NAME = '極道天魔'
+NOVEL_NAME = '修真聊天群'
 DATA_PATH = DATA_PATH + NOVEL_NAME + '/'
 if not os.path.exists(DATA_PATH):
     print('not exists so make new dir , and this is the path : ' + DATA_PATH)
@@ -18,11 +22,19 @@ if not os.path.exists(DATA_PATH):
 
 JSON_PATH = DATA_PATH + 'menu.json'
 
-# 極道天魔目錄頁
+# open webdriver with no browser
+display = Display(visible=0, size=(800, 600))
+display.start()
+
 # TODO: 未來應該建立一個 {小說: 目錄頁} mapping的json 專門給飄天文學網
 # TODO: 這邊還要研究一下，不開啟brower的爬蟲方法
+
+# 如果電腦有裝phantomjs 就可以用phantomjs
+# 一般時候就用chrome webdriver
+# ps 只有用chrome webdriver有簡轉繁
 DRIVER = webdriver.Chrome(WEBDRIVER_PATH)
-DRIVER.get('http://www.piaotian.com/html/8/8502/index.html')
+# DRIVER = webdriver.PhantomJS()
+DRIVER.get('http://www.piaotian.com/html/7/7580/index.html')
 
 CONTENTS = DRIVER.find_elements_by_css_selector(
     'body > div:nth-child(5) > div.mainbody > div.centent > ul > li')
@@ -52,7 +64,7 @@ with open(JSON_PATH, 'w') as f:
 for index in menuJson:
     url = menuJson[index]['url']
     chapter = menuJson[index]['chapter']
-    DRIVER.get('http://www.piaotian.com/html/8/8502/' + url)
+    DRIVER.get('http://www.piaotian.com/html/7/7580/' + url)
     # 使用網頁的簡轉繁功能
     DRIVER.find_element_by_id('st').click()
     content = DRIVER.find_element_by_xpath('//*[@id="content"]').text
