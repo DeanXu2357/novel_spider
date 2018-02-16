@@ -15,7 +15,7 @@ mainAct = sys.argv[1]
 if mainAct == 'list':
     if not os.path.exists(INDEX_PATH):
         with open(INDEX_PATH, 'w') as f:
-            json.dump('', f)
+            json.dump({}, f)
 
     with open(INDEX_PATH, 'r') as f:
         indexJson = json.load(f)
@@ -25,14 +25,26 @@ if mainAct == 'list':
 
         if subAct == 'add':
             print('do list add')
-            if len(sys.argv) < 5:
+            if len(sys.argv) < 6:
                 print('error : args not found')
                 exit(0)
 
             novelName = sys.argv[3]
             index = len(indexJson) + 1
+            additionalContent = {
+                'name': novelName,
+                'source': {
+                    1:{
+                        'name': sys.argv[4],
+                        'url': sys.argv[5]
+                    }
+                }
+            }
+
+            indexJson.update({index: additionalContent})
         elif subAct == 'rm':
-            print('do list remove')
+            indexJson.pop(sys.argv[3])
+            print('remove complete')
         else:
             print(subAct + ': command not found')
 
