@@ -6,25 +6,26 @@ import json
 from selenium import webdriver
 
 import setting
+from crawl import crawler
 
 DATA_PATH = os.environ.get('data_path')
 INDEX_PATH = DATA_PATH + 'index.json'
 
+if not os.path.exists(INDEX_PATH):
+    with open(INDEX_PATH, 'w') as f:
+        json.dump({}, f)
+
+with open(INDEX_PATH, 'r') as f:
+    indexJson = json.load(f)
+
+
 # 根據傳進來的參數
 mainAct = sys.argv[1]
 if mainAct == 'list':
-    if not os.path.exists(INDEX_PATH):
-        with open(INDEX_PATH, 'w') as f:
-            json.dump({}, f)
-
-    with open(INDEX_PATH, 'r') as f:
-        indexJson = json.load(f)
-
     if len(sys.argv) >= 3:
         subAct = sys.argv[2]
 
         if subAct == 'add':
-            print('do list add')
             if len(sys.argv) < 6:
                 print('error : args not found')
                 exit(0)
@@ -42,6 +43,8 @@ if mainAct == 'list':
             }
 
             indexJson.update({index: additionalContent})
+
+            print('book list update complete')
         elif subAct == 'rm':
             indexJson.pop(sys.argv[3])
             print('remove complete')
@@ -53,7 +56,12 @@ if mainAct == 'list':
     else:
         print(indexJson)
 elif mainAct == 'crawl':
-    print('do crawl')
+    for index in indexJson:
+        crawler = crawler(
+            indexJson[str(index)]['name'],
+            indexJson[str(index)]['source']['1']['url']
+        )
+        crawler.update()
 else:
     print(mainAct + ': command not found')
 
