@@ -25,10 +25,10 @@ class crawler:
         display = Display(visible=0, size=(800, 600))
         display.start()
         DRIVER = webdriver.Chrome(self.WEBDRIVER_PATH)
-        DRIVER.get(self.indexUrl)
-        CONTENTS = DRIVER.find_elements_by_css_selector('body > div:nth-child(5) > div.mainbody > div.centent > ul > li')
+        DRIVER.get(self.indexUrl + 'index.html')
 
         # 印出所有章節url
+        CONTENTS = DRIVER.find_elements_by_css_selector('body > div:nth-child(5) > div.mainbody > div.centent > ul > li')
         menuJson = {}
         menuIndex = 1
         for item in CONTENTS:
@@ -47,25 +47,36 @@ class crawler:
 
         crawlJson = self.chapDiff(menuJson, menuJson_old)
 
-        for index in crawlJson:
-            url = crawlJson[index]['url']
-            chapter = crawlJson[index]['chapter']
-            DRIVER.get('http://www.piaotian.com/html/7/7580/' + url)
-            # 使用網頁的簡轉繁功能
-            DRIVER.find_element_by_id('st').click()
-            content = DRIVER.find_element_by_xpath('//*[@id="content"]').text
-            # 檢查該路徑(DATA_PATH)下有無 index編號.md 無則創一個
-            file = open(self.DATA_PATH + str(index) + '.txt', 'a')
-            file.write(content)
-            file.close()
-            print(chapter + ' download complete')
+        self.crawl(crawlJson, self.DATA_PATH, DRIVER)
+
+        with open(self.JSON_PATH, 'w') as f:
+            json.dump(menuJson, f)
 
         print(self.name + ' download complete ')
 
     def chapDiff(self, new, old):
         print(self.indexUrl)
         returnJson = {}
-        if len(new) > len(old):
-            returnJson = new[len(old):]
+        returnIndex = 1
+
+        for new_i in new:
+            if not str(new_i) in old:
+                returnJson.update({returnIndex: new[new_i]})
+                returnIndex = returnIndex + 1
 
         return returnJson
+
+    def crawl(self, sites, path, DRIVER):
+        print('this crawl')
+        for index in sites:
+            url = sites[index]['url']
+            chapter = sites[index]['chapter']
+            DRIVER.get(self.indexUrl + url)
+            # 使用網頁的簡轉繁功能
+            DRIVER.find_element_by_id('st').click()
+            content = DRIVER.find_element_by_xpath('//*[@id="content"]').text
+            # 檢查該路徑(DATA_PATH)下有無 index編號.md 無則創一個
+            file = open(path + str(index) + '.txt', 'a')
+            file.write(content)
+            file.close()
+            print(chapter + ' download complete')
