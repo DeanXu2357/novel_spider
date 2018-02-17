@@ -8,7 +8,7 @@ from pyvirtualdisplay import Display
 
 import setting
 
-class crawler:
+class crawlers:
     def __init__(self, name, indexUrl):
         # 定義變數
         self.WEBDRIVER_PATH = os.environ.get('webdriver_path')
@@ -17,6 +17,9 @@ class crawler:
         self.JSON_PATH = self.DATA_PATH + 'menu.json'
         self.name = name
         self.indexUrl = indexUrl
+        if not os.path.exists(self.DATA_PATH):
+            print('not exists so make new dir , and this is the path : ' + self.DATA_PATH)
+            os.mkdir(self.DATA_PATH)
 
     def update(self):
         print(self.name)
@@ -41,9 +44,12 @@ class crawler:
                 menuJson.update({menuIndex: menuContent})
                 menuIndex = menuIndex + 1
 
-        # 舊章節json
-        with open(self.JSON_PATH, 'r') as f:
-            menuJson_old = json.load(f)
+        if os.path.exists(self.JSON_PATH):
+            # 舊章節json
+            with open(self.JSON_PATH, 'r') as f:
+                menuJson_old = json.load(f)
+        else:
+            menuJson_old = {}
 
         crawlJson = self.chapDiff(menuJson, menuJson_old)
 
