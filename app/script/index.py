@@ -6,7 +6,7 @@ import json
 from selenium import webdriver
 
 import setting
-from crawl import crawler
+from crawl import crawlers
 
 DATA_PATH = os.environ.get('data_path')
 INDEX_PATH = DATA_PATH + 'index.json'
@@ -57,11 +57,13 @@ if mainAct == 'list':
         print(indexJson)
 elif mainAct == 'crawl':
     for index in indexJson:
-        crawler = crawler(
+        crawler = crawlers(
             indexJson[str(index)]['name'],
             indexJson[str(index)]['source']['1']['url']
         )
         crawler.update()
+
+    print('All Complete !!')
 else:
     print(mainAct + ': command not found')
 
