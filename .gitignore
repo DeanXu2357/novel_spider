@@ -1,3 +1,5 @@
 /Data/*
 !/Data/.gitkeep
 /app/script/.env
+/.vscode
+/app/script/__pycache__
