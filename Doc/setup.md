@@ -9,3 +9,4 @@
     * lavas (npm install lavas -g)
     * composer
     * php
+    * axios (npm install axios --save 在專案根目錄)
