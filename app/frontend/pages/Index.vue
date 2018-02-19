@@ -2,6 +2,7 @@
     <div class="page-index">
         <h2>LAVAS</h2>
         <h4>[ˈlɑ:vəz]</h4>
+        <router-link to="/detail/1">To Detail 1</router-link>
         <h3>test test poyu's test</h3>
     </div>
 </template>
