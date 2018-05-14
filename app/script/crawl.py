@@ -12,6 +12,7 @@ class crawlers:
     def __init__(self, name, indexUrl):
         # 定義變數
         self.WEBDRIVER_PATH = os.environ.get('webdriver_path')
+        self.DEPENDENCY_PATH = os.environ.get('dependency_path')
         self.DATA_PATH = os.environ.get('data_path')
         self.DATA_PATH = self.DATA_PATH + name + '/'
         self.JSON_PATH = self.DATA_PATH + 'menu.json'
@@ -24,10 +25,10 @@ class crawlers:
     def update(self):
         print(self.name)
 
-        # open webdriver with no browser
-        display = Display(visible=0, size=(800, 600))
-        display.start()
-        DRIVER = webdriver.Chrome(self.WEBDRIVER_PATH)
+        option = webdriver.ChromeOptions()
+        option.add_argument('headless')
+        option.add_argument('window-size=1920x1080')
+        DRIVER = webdriver.Chrome(chrome_options=option, executable_path=self.DEPENDENCY_PATH+'headless_chromedriver')
         DRIVER.get(self.indexUrl + 'index.html')
 
         # 印出所有章節url
