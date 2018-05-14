@@ -66,10 +66,17 @@ class crawlers:
         returnIndex = 1
 
         for new_i in new:
-            if not str(new_i) in old:
-                returnJson.update({returnIndex: new[new_i]})
-                returnIndex = returnIndex + 1
+            try:
+                chap=old[str(new_i)]
+            except (IndexError, KeyError):
+                print('There is no chapter('+str(new_i)+') in database')
+                print('So add in download')
+                returnJson[new_i]=new[new_i]
+                #returnJson.update({returnIndex: new[new_i]})
+                #returnIndex = returnIndex + 1
 
+        print('new chapters :')
+        print(*returnJson)
         return returnJson
 
     def crawl(self, sites, path, DRIVER):

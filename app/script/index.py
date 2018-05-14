@@ -9,6 +9,7 @@ import setting
 from crawl import crawlers
 
 DATA_PATH = os.environ.get('data_path')
+print(DATA_PATH)
 INDEX_PATH = DATA_PATH + 'index.json'
 
 if not os.path.exists(INDEX_PATH):
