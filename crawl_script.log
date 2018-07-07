@@ -1,0 +1,26 @@
+Traceback (most recent call last):
+  File "/usr/lib/python3.6/runpy.py", line 193, in _run_module_as_main
+    "__main__", mod_spec)
+  File "/usr/lib/python3.6/runpy.py", line 85, in _run_code
+    exec(code, run_globals)
+  File "./script/__main__.py", line 5, in <module>
+    import index
+  File "./script/index.py", line 66, in <module>
+    crawler.update()
+  File "./script/crawl.py", line 31, in update
+    DRIVER = webdriver.Chrome(chrome_options=option, executable_path=self.DEPENDENCY_PATH+'headless_chromedriver')
+  File "/home/poyu/.local/lib/python3.6/site-packages/selenium/webdriver/chrome/webdriver.py", line 75, in __init__
+    desired_capabilities=desired_capabilities)
+  File "/home/poyu/.local/lib/python3.6/site-packages/selenium/webdriver/remote/webdriver.py", line 156, in __init__
+    self.start_session(capabilities, browser_profile)
+  File "/home/poyu/.local/lib/python3.6/site-packages/selenium/webdriver/remote/webdriver.py", line 245, in start_session
+    response = self.execute(Command.NEW_SESSION, parameters)
+  File "/home/poyu/.local/lib/python3.6/site-packages/selenium/webdriver/remote/webdriver.py", line 314, in execute
+    self.error_handler.check_response(response)
+  File "/home/poyu/.local/lib/python3.6/site-packages/selenium/webdriver/remote/errorhandler.py", line 242, in check_response
+    raise exception_class(message, screen, stacktrace)
+selenium.common.exceptions.WebDriverException: Message: unknown error: Chrome failed to start: exited abnormally
+  (Driver info: chromedriver=2.38.552522 (437e6fbedfa8762dec75e2c5b3ddb86763dc9dcb),platform=Linux 4.15.0-22-generic x86_64)
+
+/home/poyu/workspace/novel_spider/Data/
+修真聊天群

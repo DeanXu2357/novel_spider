@@ -1,0 +1,10 @@
+version: '3'
+
+services:
+    scripts:
+        image: scripts
+        build: scripts/
+        container_name: scripts
+        volumes:
+            - ./Data:~/Data
+            - ./app/script/:~/app/script

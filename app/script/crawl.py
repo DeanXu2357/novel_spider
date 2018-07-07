@@ -2,11 +2,14 @@ import os
 import time
 import re
 import json
+import datetime
 
 from selenium import webdriver
 from pyvirtualdisplay import Display
 
 import setting
+
+# str(datetime.datetime.now()) + ' | ' +
 
 class crawlers:
     def __init__(self, name, indexUrl):
@@ -19,11 +22,12 @@ class crawlers:
         self.name = name
         self.indexUrl = indexUrl
         if not os.path.exists(self.DATA_PATH):
-            print('not exists so make new dir , and this is the path : ' + self.DATA_PATH)
+            print(str(datetime.datetime.now()) + ' | ' +
+                  'not exists so make new dir , and this is the path : ' + self.DATA_PATH)
             os.mkdir(self.DATA_PATH)
 
     def update(self):
-        print(self.name)
+        print(str(datetime.datetime.now()) + ' | ' + self.name)
 
         option = webdriver.ChromeOptions()
         option.add_argument('headless')
@@ -59,29 +63,30 @@ class crawlers:
         with open(self.JSON_PATH, 'w') as f:
             json.dump(menuJson, f)
 
-        print(self.name + ' download complete ')
+        print(str(datetime.datetime.now()) + ' | ' +
+              self.name + ' download complete ')
 
     def chapDiff(self, new, old):
-        print(self.indexUrl)
+        # print(self.indexUrl)
         returnJson = {}
-        returnIndex = 1
+        # returnIndex = 1
 
         for new_i in new:
             try:
                 chap=old[str(new_i)]
             except (IndexError, KeyError):
-                print('There is no chapter('+str(new_i)+') in database')
-                print('So add in download')
+                # print('There is no chapter('+str(new_i)+') in database')
+                # print('So add in download')
                 returnJson[new_i]=new[new_i]
                 #returnJson.update({returnIndex: new[new_i]})
                 #returnIndex = returnIndex + 1
 
-        print('new chapters :')
+        # print('new chapters :')
         print(*returnJson)
         return returnJson
 
     def crawl(self, sites, path, DRIVER):
-        print('this crawl')
+        # print('this crawl')
         for index in sites:
             url = sites[index]['url']
             chapter = sites[index]['chapter']
@@ -93,4 +98,5 @@ class crawlers:
             file = open(path + str(index) + '.txt', 'a')
             file.write(content)
             file.close()
-            print(chapter + ' download complete')
+            # print(str(datetime.datetime.now()) +
+            #       ' | ' + chapter + ' download complete')

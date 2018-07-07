@@ -1,7 +1,9 @@
+#!/usr/bin/python3
 import os
 import time
 import sys
 import json
+import datetime
 
 from selenium import webdriver
 
@@ -9,7 +11,7 @@ import setting
 from crawl import crawlers
 
 DATA_PATH = os.environ.get('data_path')
-print(DATA_PATH)
+# print(DATA_PATH)
 INDEX_PATH = DATA_PATH + 'index.json'
 
 if not os.path.exists(INDEX_PATH):
@@ -19,7 +21,6 @@ if not os.path.exists(INDEX_PATH):
 with open(INDEX_PATH, 'r') as f:
     indexJson = json.load(f)
 
-
 # 根據傳進來的參數
 mainAct = sys.argv[1]
 if mainAct == 'list':
@@ -28,7 +29,8 @@ if mainAct == 'list':
 
         if subAct == 'add':
             if len(sys.argv) < 6:
-                print('error : args not found')
+                print(str(datetime.datetime.now()) +
+                      ' | ' + 'error : args not found')
                 exit(0)
 
             novelName = sys.argv[3]
@@ -45,12 +47,14 @@ if mainAct == 'list':
 
             indexJson.update({index: additionalContent})
 
-            print('book list update complete')
+            print(str(datetime.datetime.now()) +
+                  ' | ' + 'book list update complete')
         elif subAct == 'rm':
             indexJson.pop(sys.argv[3])
-            print('remove complete')
+            print(str(datetime.datetime.now()) + ' | ' + 'remove complete')
         else:
-            print(subAct + ': command not found')
+            print(str(datetime.datetime.now()) +
+                  ' | ' + subAct + ': command not found')
 
         with open(INDEX_PATH, 'w') as f:
             json.dump(indexJson, f)
@@ -64,9 +68,11 @@ elif mainAct == 'crawl':
         )
         crawler.update()
 
-    print('All Complete !!')
+    print(str(datetime.datetime.now()) + ' | ' +
+          'All Complete !!')
 else:
-    print(mainAct + ': command not found')
+    print(str(datetime.datetime.now()) + ' | ' +
+          mainAct + ': command not found')
 
 # list add
 # 新增 書籍＆index url
