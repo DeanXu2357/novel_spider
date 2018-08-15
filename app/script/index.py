@@ -61,6 +61,8 @@ if mainAct == 'list':
     else:
         print(indexJson)
 elif mainAct == 'crawl':
+    start = time.perf_counter()
+
     for index in indexJson:
         crawler = crawlers(
             indexJson[str(index)]['name'],
@@ -68,6 +70,8 @@ elif mainAct == 'crawl':
         )
         crawler.update()
 
+    print(str(datetime.datetime.now()) + ' | ' +
+          '總執行時間:', time.perf_counter() - start)
     print(str(datetime.datetime.now()) + ' | ' +
           'All Complete !!')
 else:

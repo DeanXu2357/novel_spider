@@ -3,6 +3,8 @@ import time
 import re
 import json
 import datetime
+import threading
+from queue import Queue
 
 from selenium import webdriver
 from pyvirtualdisplay import Display
@@ -21,12 +23,14 @@ class crawlers:
         self.JSON_PATH = self.DATA_PATH + 'menu.json'
         self.name = name
         self.indexUrl = indexUrl
+        self.crawlQueue = Queue()
         if not os.path.exists(self.DATA_PATH):
             print(str(datetime.datetime.now()) + ' | ' +
                   'not exists so make new dir , and this is the path : ' + self.DATA_PATH)
             os.mkdir(self.DATA_PATH)
 
     def update(self):
+        start = time.perf_counter()
         print(str(datetime.datetime.now()) + ' | ' + self.name)
 
         option = webdriver.ChromeOptions()
@@ -56,47 +60,81 @@ class crawlers:
         else:
             menuJson_old = {}
 
+        DRIVER.quit()
+
         crawlJson = self.chapDiff(menuJson, menuJson_old)
 
-        self.crawl(crawlJson, self.DATA_PATH, DRIVER)
+        if len(crawlJson) > 1:
+            print('新內容：')
+            print(*crawlJson)
+            self.crawl(crawlJson, self.DATA_PATH)
 
         with open(self.JSON_PATH, 'w') as f:
             json.dump(menuJson, f)
 
         print(str(datetime.datetime.now()) + ' | ' +
-              self.name + ' download complete ')
+               '單本執行時間:', time.perf_counter() - start)
+        print(str(datetime.datetime.now()) + ' | ' + 'complete ')
 
     def chapDiff(self, new, old):
-        # print(self.indexUrl)
         returnJson = {}
-        # returnIndex = 1
 
         for new_i in new:
             try:
                 chap=old[str(new_i)]
             except (IndexError, KeyError):
-                # print('There is no chapter('+str(new_i)+') in database')
-                # print('So add in download')
                 returnJson[new_i]=new[new_i]
-                #returnJson.update({returnIndex: new[new_i]})
-                #returnIndex = returnIndex + 1
 
-        # print('new chapters :')
-        print(*returnJson)
         return returnJson
 
-    def crawl(self, sites, path, DRIVER):
-        # print('this crawl')
-        for index in sites:
-            url = sites[index]['url']
-            chapter = sites[index]['chapter']
-            DRIVER.get(self.indexUrl + url)
-            # 使用網頁的簡轉繁功能
-            DRIVER.find_element_by_id('st').click()
-            content = DRIVER.find_element_by_xpath('//*[@id="content"]').text
-            # 檢查該路徑(DATA_PATH)下有無 index編號.md 無則創一個
-            file = open(path + str(index) + '.txt', 'a')
-            file.write(content)
-            file.close()
-            # print(str(datetime.datetime.now()) +
-            #       ' | ' + chapter + ' download complete')
+    # 根據sites 迴圈爬取目標內容
+    def crawl(self, sites, path):
+        if len(sites) < 10:
+            threadNum = 1
+        elif len(sites) > 100:
+            threadNum = 8
+        else:
+            threadNum = 4
+
+        # creating a thread pool
+        for i in range(threadNum):
+            t = threading.Thread(target=self.crawlWorker, args=(sites, path))
+            t.daemon = True
+            t.start()
+
+        # add sites to queue 將所有欲爬取的目標加到對列
+        start = time.perf_counter()
+        for item in sites:
+            self.crawlQueue.put(item)
+
+        self.crawlQueue.join()
+        print('Crawl Time:', time.perf_counter() - start)
+
+    # 爬取的worker
+    def crawlWorker(self, sites, basicPath):
+        while True:
+            # 初始化webdriver
+            option = webdriver.ChromeOptions()
+            option.add_argument('headless')
+            option.add_argument('window-size=1920x1080')
+            Driver = webdriver.Chrome(chrome_options=option, executable_path=self.DEPENDENCY_PATH+'headless_chromedriver')
+
+            # 根據queue爬取對應資料
+            target = self.crawlQueue.get()
+            url = sites[target]['url']
+            self.crawlByUrl(url, target, basicPath, Driver)
+            self.crawlQueue.task_done()
+
+            Driver.close()
+
+    # 爬取單頁
+    def crawlByUrl(self, url, fileName, basicPath, Driver):
+        Driver.get(self.indexUrl + url)
+        # 使用網頁的簡轉繁功能
+        Driver.find_element_by_id('st').click()
+        content = Driver.find_element_by_xpath('//*[@id="content"]').text
+        # 檢查該路徑(DATA_PATH)下有無 index編號.md 無則創一個
+        file = open(basicPath + str(fileName) + '.txt', 'a')
+        file.write(content)
+        file.close()
+
